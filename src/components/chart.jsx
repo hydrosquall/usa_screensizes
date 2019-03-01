@@ -1,3 +1,6 @@
+// Based on Tableau Chart
+// https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1
+
 import React from "react";
 
 import { XYFrame, OrdinalFrame } from "semiotic";
@@ -7,16 +10,14 @@ import { scaleSqrt, scaleLinear, scaleQuantile } from "d3-scale";
 import {  max, histogram } from "d3-array";
 import { schemeSet2 } from 'd3-scale-chromatic';
 
-import switchcase from 'switchcase';
-
 const CHART_WIDTH = 850;
-const CHART_HEIGHT = 700;
+const CHART_HEIGHT = 600;
 const CHART_MARGIN = { left: 60, bottom: 60, top: 50, right: 30 };
 const CHART_DIMS = [CHART_WIDTH, CHART_HEIGHT];
 
 const X_MARGIN_CHART_HEIGHT = 200;
 const X_MARGIN_CHART_DIMS = [CHART_WIDTH, X_MARGIN_CHART_HEIGHT];
-const X_NUM_TICKS = 50;
+const X_NUM_TICKS = 100;
 
 const Y_MARGIN_CHART_WIDTH = 200;
 const Y_MARGIN_CHART_DIMS = [Y_MARGIN_CHART_WIDTH, CHART_HEIGHT];
@@ -58,7 +59,9 @@ const Scatterplot = props => {
   // Custom component because we need the radius to scale based on the data that came in.
   const Point = props => {
     return <circle r={`${radiusScale(props.d.visits)}`}
-                   fill={getRatioColor(props.d)}/>;
+                   stroke={getRatioColor(props.d)}
+                   fill='none'
+                   />;
   };
 
   return (
