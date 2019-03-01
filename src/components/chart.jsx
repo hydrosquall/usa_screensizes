@@ -50,7 +50,7 @@ const getRatioColor = (point) => {
   return 'steelblue'
 };
 
-
+// Add brush??
 const Scatterplot = props => {
   const radiusScale = scaleSqrt()
     .domain([0, max(props.data, d => d.visits)])
@@ -64,6 +64,8 @@ const Scatterplot = props => {
                    />;
   };
 
+  const identity = () => {};
+
   return (
     <XYFrame
       size={CHART_DIMS}
@@ -72,6 +74,13 @@ const Scatterplot = props => {
       customPointMark={metadata => <Point d={metadata.d} />} // d is for point data
       xAccessor="width"
       yAccessor="height"
+      interaction={{
+        start: identity,
+        during: identity,
+        end: identity,
+        brush: "xyBrush", //xBrush, yBrush or xyBrush
+        // extent: extent //optional set starting extent
+      }}
     />
   );
 };
