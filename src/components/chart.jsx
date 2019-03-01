@@ -1,18 +1,19 @@
 import React from "react";
 
-import { XYFrame } from "semiotic";
+import { XYFrame, OrdinalFrame } from "semiotic";
 import withData from "./withData";
 
-import { scaleSqrt } from "d3-scale";
-import { extent, max } from "d3-array";
+import { scaleSqrt, scaleLinear } from "d3-scale";
+import {  max, histogram } from "d3-array";
 
 const CHART_WIDTH = 1000;
 const CHART_HEIGHT = 700;
 const CHART_MARGIN = { left: 60, bottom: 60, top: 50, right: 30 };
 const CHART_DIMS = [CHART_WIDTH, CHART_HEIGHT];
 
-const X_MARGIN_CHART_HEIGHT = 300;
+const X_MARGIN_CHART_HEIGHT = 200;
 const X_MARGIN_CHART_DIMS = [CHART_WIDTH, X_MARGIN_CHART_HEIGHT];
+const X_NUM_TICKS = 40;
 
 const Y_MARGIN_CHART_WIDTH = 300;
 const Y_MARGIN_CHART_DIMS = [Y_MARGIN_CHART_WIDTH, CHART_HEIGHT];
@@ -40,12 +41,28 @@ const Scatterplot = props => {
 };
 
 const MarginPlotX = props => {
-  return <XYFrame
+  const { data } = props;
+  const xScale = scaleLinear()
+    .domain([0, max(props.data, d => d.width)])
+    .range([CHART_MARGIN.left, CHART_WIDTH - CHART_MARGIN.right]);
+
+  const makeHistogram = histogram()
+                          .domain(xScale.domain())
+                          .thresholds(xScale.ticks(X_NUM_TICKS))
+                          .value(d => d.width);
+
+  const bins = makeHistogram(data);
+
+  console.log(bins);
+
+  return <OrdinalFrame
     size={X_MARGIN_CHART_DIMS}
-    margin={{ left: 60, bottom: 60, top: 50, right: 30 }}
-    points={props.data}
-    xAccessor="width"
-    yAccessor="height"
+    margin={{ left: 60, bottom: 10, top: 50, right: 30 }}
+    data={bins}
+    projection={'vertical'}
+    type={'bar'}
+    oAccessor={d => d.x0} // or x1
+    rAccessor={d => d.length}
   />;
 };
 
@@ -63,8 +80,9 @@ const MarginPlotY = props => {
 const Chart = props => {
   return (
     <div>
-      <Scatterplot data={props.data} />
       <MarginPlotX data={props.data} />
+      <Scatterplot data={props.data} />
+
       <MarginPlotY data={props.data} />
     </div>
   );
