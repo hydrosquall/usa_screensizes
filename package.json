@@ -11,7 +11,8 @@
     "react-hot-loader": "^4.7.1",
     "react-scripts": "2.1.5",
     "rxjs": "^6.4.0",
-    "semiotic": "^1.17.0"
+    "semiotic": "^1.17.0",
+    "switchcase": "^1.0.11"
   },
   "scripts": {
     "start": "rescripts start",

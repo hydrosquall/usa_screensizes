@@ -16,7 +16,7 @@ import {
 } from "rxjs/operators";
 
 const DATA_URL = "https://analytics.usa.gov/data/live/screen-size.csv";
-const NUM_POINTS = 1000;
+const NUM_POINTS = 9000;
 
 // TODO: add date filter someday with // date: parseDate(row.date),
 // const parseDate = timeParse("%Y-%m-%d"); // 2019-01-28

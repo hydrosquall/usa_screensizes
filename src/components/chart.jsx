@@ -3,8 +3,11 @@ import React from "react";
 import { XYFrame, OrdinalFrame } from "semiotic";
 import withData from "./withData";
 
-import { scaleSqrt, scaleLinear } from "d3-scale";
+import { scaleSqrt, scaleLinear, scaleQuantile } from "d3-scale";
 import {  max, histogram } from "d3-array";
+import { schemeSet2 } from 'd3-scale-chromatic';
+
+import switchcase from 'switchcase';
 
 const CHART_WIDTH = 850;
 const CHART_HEIGHT = 700;
@@ -19,6 +22,34 @@ const Y_MARGIN_CHART_WIDTH = 200;
 const Y_MARGIN_CHART_DIMS = [Y_MARGIN_CHART_WIDTH, CHART_HEIGHT];
 const Y_NUM_TICKS = 50;
 
+const COMMON_RESOLUTIONS = new Set([
+  3/2,
+  4/3,
+  5/3,
+  5/4,
+  8/5,
+  16/9,
+  21/9,
+]);
+
+const colorScale = scaleQuantile()
+                    .domain(Array.from(COMMON_RESOLUTIONS))
+                    .range(schemeSet2);
+
+// const getRatioColor = switchcase({
+//   [d => d.height === 0]: '#ffffff', // use d3 color later
+//   [d => COMMON_RESOLUTIONS.has(d.width / d.height)]: (d) => colorScale(d.width / d.height),
+//   default: 'blue'
+// });
+
+const getRatioColor = (point) => {
+  if (point.height === 0) return '#000';
+  const ratio = point.width / point.height;
+  if (point => COMMON_RESOLUTIONS.has(ratio)) return colorScale(ratio);
+  return 'steelblue'
+};
+
+
 const Scatterplot = props => {
   const radiusScale = scaleSqrt()
     .domain([0, max(props.data, d => d.visits)])
@@ -26,7 +57,8 @@ const Scatterplot = props => {
 
   // Custom component because we need the radius to scale based on the data that came in.
   const Point = props => {
-    return <circle r={`${radiusScale(props.visits)}`} />;
+    return <circle r={`${radiusScale(props.d.visits)}`}
+                   fill={getRatioColor(props.d)}/>;
   };
 
   return (
@@ -34,7 +66,7 @@ const Scatterplot = props => {
       size={CHART_DIMS}
       margin={CHART_MARGIN}
       points={props.data}
-      customPointMark={metadata => <Point visits={metadata.d.visits} />}
+      customPointMark={metadata => <Point d={metadata.d} />} // d is for point data
       xAccessor="width"
       yAccessor="height"
     />
