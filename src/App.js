@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { hot } from 'react-hot-loader'
 
 import './App.css';
 
@@ -14,4 +15,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default process.env.NODE_ENV === "development" ? hot(module)(App) : App

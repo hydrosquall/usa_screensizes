@@ -51,5 +51,4 @@ const Chart = props => {
 };
 
 
-
 export default withData(Chart);
