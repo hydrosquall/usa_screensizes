@@ -85,6 +85,7 @@ const Scatterplot = props => {
   );
 };
 
+// TODO: stacking for margin plots...
 const MarginPlotX = props => {
   const { data } = props;
   const xScale = scaleLinear()
