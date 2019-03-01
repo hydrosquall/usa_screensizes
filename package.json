@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "d3": "^5.9.1",
+    "d3-array": "^2.0.3",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
-    "react-scripts": "2.1.5"
+    "react-scripts": "2.1.5",
+    "rxjs": "^6.4.0",
+    "semiotic": "^1.17.0"
   },
   "scripts": {
     "start": "react-scripts start",
