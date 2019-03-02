@@ -109,41 +109,6 @@ const Scatterplot = props => {
             />
           )
         }
-        // Gridlines, pulled from xyframe docs
-        // {
-        //   orient: "bottom",
-        //   tickLineGenerator: ({ xy }) => (
-        //     <line
-        //       key={`line-${xy.y1}-${xy.x1}`}
-        //       x1={xy.x1}
-        //       x2={xy.x2}
-        //       y1={xy.y1}
-        //       y2={xy.y2}
-        //       style={{
-        //         strokeDasharray: "6 6",
-        //         stroke: "grey",
-        //         strokeOpacity: 0.3
-        //       }}
-        //     />
-        //   )
-        // },
-        // {
-        //   orient: "left",
-        //   tickLineGenerator: ({ xy }) => (
-        //     <line
-        //       key={`line-${xy.y1}-${xy.x1}`}
-        //       x1={xy.x1}
-        //       x2={xy.x2}
-        //       y1={xy.y1}
-        //       y2={xy.y2}
-        //       style={{
-        //         strokeDasharray: "5 5",
-        //         stroke: "grey",
-        //         strokeOpacity: 0.3
-        //       }}
-        //     />
-        //   )
-        // },
       ]}
     />
   );
