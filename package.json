@@ -31,6 +31,7 @@
   ],
   "devDependencies": {
     "@rescripts/cli": "0.0.10",
+    "@rescripts/rescript-env": "0.0.5",
     "@rescripts/rescript-use-rewire": "0.0.4"
   },
   "rescripts": [

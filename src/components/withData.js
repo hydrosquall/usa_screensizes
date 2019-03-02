@@ -15,7 +15,8 @@ import {
 
 } from "rxjs/operators";
 
-const DATA_URL = "https://analytics.usa.gov/data/live/screen-size.csv";
+const DATA_URL = "./screen-size.csv"; // for development
+// const DATA_URL = "https://analytics.usa.gov/data/live/screen-size.csv";
 const NUM_POINTS = 9000;
 
 // TODO: add date filter someday with // date: parseDate(row.date),

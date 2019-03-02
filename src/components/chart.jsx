@@ -7,8 +7,8 @@ import { XYFrame, OrdinalFrame } from "semiotic";
 import withData from "./withData";
 
 import { scaleSqrt, scaleLinear, scaleQuantile } from "d3-scale";
-import {  max, histogram } from "d3-array";
-import { schemeSet2 } from 'd3-scale-chromatic';
+import { max, histogram } from "d3-array";
+import { schemeSet2 } from "d3-scale-chromatic";
 
 const CHART_WIDTH = 850;
 const CHART_HEIGHT = 600;
@@ -24,30 +24,24 @@ const Y_MARGIN_CHART_DIMS = [Y_MARGIN_CHART_WIDTH, CHART_HEIGHT];
 const Y_NUM_TICKS = 50;
 
 const COMMON_RESOLUTIONS = new Set([
-  3/2,
-  4/3,
-  5/3,
-  5/4,
-  8/5,
-  16/9,
-  21/9,
+  3 / 2,
+  4 / 3,
+  5 / 3,
+  5 / 4,
+  8 / 5,
+  16 / 9,
+  21 / 9
 ]);
 
 const colorScale = scaleQuantile()
-                    .domain(Array.from(COMMON_RESOLUTIONS))
-                    .range(schemeSet2);
+  .domain(Array.from(COMMON_RESOLUTIONS))
+  .range(schemeSet2);
 
-// const getRatioColor = switchcase({
-//   [d => d.height === 0]: '#ffffff', // use d3 color later
-//   [d => COMMON_RESOLUTIONS.has(d.width / d.height)]: (d) => colorScale(d.width / d.height),
-//   default: 'blue'
-// });
-
-const getRatioColor = (point) => {
-  if (point.height === 0) return '#000';
+const getRatioColor = point => {
+  if (point.height === 0) return "#000";
   const ratio = point.width / point.height;
-  if (point => COMMON_RESOLUTIONS.has(ratio)) return colorScale(ratio);
-  return 'steelblue'
+  if (COMMON_RESOLUTIONS.has(ratio)) return colorScale(ratio);
+  return "lightgrey";
 };
 
 // Add brush??
@@ -58,13 +52,14 @@ const Scatterplot = props => {
 
   // Custom component because we need the radius to scale based on the data that came in.
   const Point = props => {
-    return <circle r={`${radiusScale(props.d.visits)}`}
-                   stroke={getRatioColor(props.d)}
-                   fill='none'
-                   />;
+    return (
+      <circle
+        r={`${radiusScale(props.d.visits)}`}
+        stroke={getRatioColor(props.d)}
+        fill="none"
+      />
+    );
   };
-
-  const identity = () => {};
 
   return (
     <XYFrame
@@ -74,13 +69,82 @@ const Scatterplot = props => {
       customPointMark={metadata => <Point d={metadata.d} />} // d is for point data
       xAccessor="width"
       yAccessor="height"
-      interaction={{
-        start: identity,
-        during: identity,
-        end: identity,
-        brush: "xyBrush", //xBrush, yBrush or xyBrush
-        // extent: extent //optional set starting extent
-      }}
+      axes={[
+        {
+          orient: "left",
+          tickFormat: d => d,
+          ticks: 8,
+          footer: false,
+          tickLineGenerator: ({ xy }) => (
+            <line
+              key={`line-${xy.y1}-${xy.x1}`}
+              x1={xy.x1}
+              x2={xy.x2}
+              y1={xy.y1}
+              y2={xy.y2}
+              style={{
+                strokeDasharray: "6 6",
+                stroke: "grey",
+                strokeOpacity: 0.3
+              }}
+            />
+          )
+        },
+        {
+          orient: "bottom",
+          tickFormat: d => d,
+          footer: true,
+          ticks: 12,
+          tickLineGenerator: ({ xy }) => (
+            <line
+              key={`line-${xy.y1}-${xy.x1}`}
+              x1={xy.x1}
+              x2={xy.x2}
+              y1={xy.y1}
+              y2={xy.y2}
+              style={{
+                stroke: "grey",
+                strokeOpacity: 0.3
+              }}
+            />
+          )
+        }
+        // Gridlines, pulled from xyframe docs
+        // {
+        //   orient: "bottom",
+        //   tickLineGenerator: ({ xy }) => (
+        //     <line
+        //       key={`line-${xy.y1}-${xy.x1}`}
+        //       x1={xy.x1}
+        //       x2={xy.x2}
+        //       y1={xy.y1}
+        //       y2={xy.y2}
+        //       style={{
+        //         strokeDasharray: "6 6",
+        //         stroke: "grey",
+        //         strokeOpacity: 0.3
+        //       }}
+        //     />
+        //   )
+        // },
+        // {
+        //   orient: "left",
+        //   tickLineGenerator: ({ xy }) => (
+        //     <line
+        //       key={`line-${xy.y1}-${xy.x1}`}
+        //       x1={xy.x1}
+        //       x2={xy.x2}
+        //       y1={xy.y1}
+        //       y2={xy.y2}
+        //       style={{
+        //         strokeDasharray: "5 5",
+        //         stroke: "grey",
+        //         strokeOpacity: 0.3
+        //       }}
+        //     />
+        //   )
+        // },
+      ]}
     />
   );
 };
@@ -93,20 +157,22 @@ const MarginPlotX = props => {
     .range([CHART_MARGIN.left, CHART_WIDTH - CHART_MARGIN.right]);
 
   const makeHistogram = histogram()
-                          .domain(xScale.domain())
-                          .thresholds(xScale.ticks(X_NUM_TICKS))
-                          .value(d => d.width);
+    .domain(xScale.domain())
+    .thresholds(xScale.ticks(X_NUM_TICKS))
+    .value(d => d.width);
   const bins = makeHistogram(data);
 
-  return <OrdinalFrame
-    size={X_MARGIN_CHART_DIMS}
-    margin={{ left: 60, bottom: 0, top: 50, right: 30 }}
-    data={bins}
-    projection={'vertical'}
-    type={'bar'}
-    oAccessor={d => d.x0} // or x1
-    rAccessor={d => d.length}
-  />;
+  return (
+    <OrdinalFrame
+      size={X_MARGIN_CHART_DIMS}
+      margin={{ left: 60, bottom: 0, top: 50, right: 30 }}
+      data={bins}
+      projection={"vertical"}
+      type={"bar"}
+      oAccessor={d => d.x0} // or x1
+      rAccessor={d => d.length}
+    />
+  );
 };
 
 //
@@ -122,23 +188,35 @@ const MarginPlotY = props => {
     .value(d => -d.height);
   const bins = makeHistogram(data);
 
-  return <OrdinalFrame
-    size={Y_MARGIN_CHART_DIMS}
-    margin={{ left: 0, bottom: CHART_MARGIN.bottom, top: CHART_MARGIN.top, right: 30 }}
-    data={bins}
-    projection={'horizontal'}
-    type={'bar'}
-    oAccessor={d => d.x0} // or x1
-    rAccessor={d => d.length}
-  />;
+  return (
+    <OrdinalFrame
+      size={Y_MARGIN_CHART_DIMS}
+      margin={{
+        left: 0,
+        bottom: CHART_MARGIN.bottom,
+        top: CHART_MARGIN.top,
+        right: 30
+      }}
+      data={bins}
+      projection={"horizontal"}
+      type={"bar"}
+      oAccessor={d => d.x0} // or x1
+      rAccessor={d => d.length}
+    />
+  );
 };
 
 const Chart = props => {
   return (
     <div>
       <MarginPlotX data={props.data} />
-      <div style={{ display: 'inline-block' }}><Scatterplot data={props.data} /></div>
-      <div style={{ display: 'inline-block' }}> <MarginPlotY data={props.data} style={{ display: 'inline-block' }} /></div>
+      <div style={{ display: "inline-block" }}>
+        <Scatterplot data={props.data} />
+      </div>
+      <div style={{ display: "inline-block" }}>
+        {" "}
+        <MarginPlotY data={props.data} style={{ display: "inline-block" }} />
+      </div>
     </div>
   );
 };
