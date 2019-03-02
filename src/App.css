@@ -2,6 +2,11 @@
   text-align: center;
 }
 
+.compoundChart {
+  text-align: left;
+  display: inline-block;
+}
+
 /* Axis muted */
 .xyframe .data-visualization .axis.y line {
   stroke: lightgrey;

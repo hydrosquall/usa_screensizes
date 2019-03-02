@@ -1,4 +1,4 @@
-// Based on Tableau Chart
+// Based on Ben Jone's Tableau Chart
 // https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1
 
 import React from "react";
@@ -12,14 +12,14 @@ import { schemeSet2 } from "d3-scale-chromatic";
 
 const CHART_WIDTH = 850;
 const CHART_HEIGHT = 600;
-const CHART_MARGIN = { left: 60, bottom: 60, top: 50, right: 30 };
+const CHART_MARGIN = { left: 70, bottom: 60, top: 30, right: 30 };
 const CHART_DIMS = [CHART_WIDTH, CHART_HEIGHT];
 
-const X_MARGIN_CHART_HEIGHT = 200;
+const X_MARGIN_CHART_HEIGHT = 120;
 const X_MARGIN_CHART_DIMS = [CHART_WIDTH, X_MARGIN_CHART_HEIGHT];
 const X_NUM_TICKS = 100;
 
-const Y_MARGIN_CHART_WIDTH = 200;
+const Y_MARGIN_CHART_WIDTH = 120;
 const Y_MARGIN_CHART_DIMS = [Y_MARGIN_CHART_WIDTH, CHART_HEIGHT];
 const Y_NUM_TICKS = 50;
 
@@ -48,7 +48,7 @@ const getRatioColor = point => {
 const Scatterplot = props => {
   const radiusScale = scaleSqrt()
     .domain([0, max(props.data, d => d.visits)])
-    .range([3, 9]);
+    .range([3, 12]);
 
   // Custom component because we need the radius to scale based on the data that came in.
   const Point = props => {
@@ -74,7 +74,7 @@ const Scatterplot = props => {
           orient: "left",
           tickFormat: d => d,
           ticks: 8,
-          footer: false,
+          footer: true,
           tickLineGenerator: ({ xy }) => (
             <line
               key={`line-${xy.y1}-${xy.x1}`}
@@ -103,6 +103,7 @@ const Scatterplot = props => {
               y1={xy.y1}
               y2={xy.y2}
               style={{
+                strokeDasharray: "6 6",
                 stroke: "grey",
                 strokeOpacity: 0.3
               }}
@@ -130,7 +131,7 @@ const MarginPlotX = props => {
   return (
     <OrdinalFrame
       size={X_MARGIN_CHART_DIMS}
-      margin={{ left: 60, bottom: 0, top: 50, right: 30 }}
+      margin={{ left: CHART_MARGIN.left, bottom: 0, top: 50, right: CHART_MARGIN.right }}
       data={bins}
       projection={"vertical"}
       type={"bar"}
@@ -173,8 +174,10 @@ const MarginPlotY = props => {
 
 const Chart = props => {
   return (
-    <div>
+    <div className="compoundChart">
+      <div style={{ display: "inline-block" }}>
       <MarginPlotX data={props.data} />
+      </div>
       <div style={{ display: "inline-block" }}>
         <Scatterplot data={props.data} />
       </div>
