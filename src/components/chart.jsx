@@ -12,7 +12,7 @@ import { schemeSet2 } from "d3-scale-chromatic";
 
 const CHART_WIDTH = 850;
 const CHART_HEIGHT = 600;
-const CHART_MARGIN = { left: 70, bottom: 60, top: 30, right: 30 };
+const CHART_MARGIN = { left: 70, bottom: 60, top: 30, right: 10 };
 const CHART_DIMS = [CHART_WIDTH, CHART_HEIGHT];
 
 const X_MARGIN_CHART_HEIGHT = 120;
@@ -22,6 +22,8 @@ const X_NUM_TICKS = 100;
 const Y_MARGIN_CHART_WIDTH = 120;
 const Y_MARGIN_CHART_DIMS = [Y_MARGIN_CHART_WIDTH, CHART_HEIGHT];
 const Y_NUM_TICKS = 50;
+
+const AXIS_COLOR = 'grey'
 
 const COMMON_RESOLUTIONS = new Set([
   3 / 2,
@@ -84,7 +86,7 @@ const Scatterplot = props => {
               y2={xy.y2}
               style={{
                 strokeDasharray: "6 6",
-                stroke: "grey",
+                stroke: AXIS_COLOR,
                 strokeOpacity: 0.3
               }}
             />
@@ -104,7 +106,7 @@ const Scatterplot = props => {
               y2={xy.y2}
               style={{
                 strokeDasharray: "6 6",
-                stroke: "grey",
+                stroke: AXIS_COLOR,
                 strokeOpacity: 0.3
               }}
             />
@@ -114,6 +116,8 @@ const Scatterplot = props => {
     />
   );
 };
+
+const getMarginChartStyle = (d) => ({ fill: 'lightgrey', stroke: 'none' });
 
 // TODO: stacking for margin plots... do little grouping in the bins so that the colors come out correctly.
 const MarginPlotX = props => {
@@ -137,6 +141,8 @@ const MarginPlotX = props => {
       type={"bar"}
       oAccessor={d => d.x0} // or x1
       rAccessor={d => d.length}
+      style={getMarginChartStyle}
+      hoverAnnotation={true}
     />
   );
 };
@@ -168,6 +174,8 @@ const MarginPlotY = props => {
       type={"bar"}
       oAccessor={d => d.x0} // or x1
       rAccessor={d => d.length}
+      style={getMarginChartStyle}
+      hoverAnnotation={true}
     />
   );
 };
