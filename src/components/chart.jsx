@@ -13,6 +13,8 @@ import { symbol, symbolCircle, } from 'd3-shape';
 import { legendColor } from 'd3-svg-legend';
 import { timeFormat } from "d3-time-format";
 import { compactInteger } from 'humanize-plus';
+import { BounceLoader } from 'react-spinners';
+
 
 import withData from "./withData";
 import { getRatioColor, AXIS_COLOR, colorScale } from '../formatting/colors';
@@ -34,7 +36,6 @@ const formatDate = timeFormat("%Y-%m-%d"); // 2019-01-28
 
 
 const scatterTooltip = (d) => {
-  console.log(d);
   return <div className="tooltip-content">
     <p>({d.width}x{d.height}) | {compactInteger(d.visits)} Visits</p>
   </div>
@@ -225,30 +226,51 @@ const Chart = props => {
 
   const timeString = `${props.timeExtent.map(time => formatDate(time)).join(' and ')}`
 
+  const { data } = props;
+
+  const charts = (
+    <React.Fragment>
+      <div style={{ display: "inline-block" }}>
+        <MarginPlotX data={data} />
+      </div>
+      <div style={{ display: "inline-block" }}>
+        <Scatterplot data={data} />
+      </div>
+      <div style={{ display: "inline-block" }}>
+        <MarginPlotY data={data} />
+      </div>
+
+    </React.Fragment>
+  );
+
   return (
     <div className="compoundChart">
       <ChartTextBlock>
         <ChartTitle>Screen Resolutions of Visitors to US Federal Government Sites</ChartTitle>
         <CaptionText>
-          A <a href="https://semiotic.nteract.io" target="_blank">Semiotic</a> remake of Ben Jones's <a href="https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1" target="_blank">Tableau Project</a>.
+          A <a href="https://semiotic.nteract.io" rel="noopener noreferrer" target="_blank">Semiotic</a> remake of Ben Jones's <a href="https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1" rel="noopener noreferrer" target="_blank">Tableau Project</a>.
         </CaptionText>
 
       </ChartTextBlock>
-      <div style={{ display: "inline-block" }}>
-      <MarginPlotX data={props.data} />
+
+      <div className='appBody'>
+      {data.length > 0 ?
+          charts : <ChartTextBlock>
+
+            <CaptionText>
+              Data is on its way!
+        </CaptionText>
+
+          </ChartTextBlock>
+      }
       </div>
-      <div style={{ display: "inline-block" }}>
-        <Scatterplot data={props.data} />
-      </div>
-      <div style={{ display: "inline-block" }}>
-        <MarginPlotY data={props.data} />
-      </div>
+
       <ChartTextBlock>
         <ChartLegend />
       </ChartTextBlock>
       <ChartTextBlock>
         <CaptionText>
-          Data updates daily from <a href="https://analytics.usa.gov/" target="_blank">analytics.gov.usa</a>. Point areas correspond to total visits between {timeString}.
+          Data updates daily from <a href="https://analytics.usa.gov/" rel="noopener noreferrer" target="_blank">analytics.gov.usa</a>. Point areas correspond to total visits between {timeString}.
         </CaptionText>
       </ChartTextBlock>
     </div>

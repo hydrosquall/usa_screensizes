@@ -44,3 +44,9 @@
   margin: 3px 2px;
   opacity: 1;
 }
+
+/* // Same as chart */
+.appBody {
+  height: 720;
+  width: 850;
+}
