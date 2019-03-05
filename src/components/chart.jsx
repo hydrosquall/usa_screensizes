@@ -4,11 +4,11 @@
 import React from "react";
 
 import { XYFrame, OrdinalFrame } from "semiotic";
-import withData from "./withData";
-
 import { scaleSqrt, scaleLinear } from "d3-scale";
 import { max, histogram } from "d3-array";
+import styled from 'tachyons-components'
 
+import withData from "./withData";
 import { getRatioColor, AXIS_COLOR } from '../formatting/colors';
 
 import {
@@ -18,7 +18,6 @@ import {
   CHART_MARGIN,
   X_MARGIN_CHART_DIMS,
   Y_MARGIN_CHART_DIMS,
-
   //
   X_NUM_TICKS,
   Y_NUM_TICKS,
@@ -120,7 +119,6 @@ const MarginPlotX = props => {
       oAccessor={d => d.x0} // or x1
       rAccessor={d => d.length}
       style={getMarginChartStyle}
-      hoverAnnotation={true}
     />
   );
 };
@@ -153,10 +151,27 @@ const MarginPlotY = props => {
       oAccessor={d => d.x0} // or x1
       rAccessor={d => d.length}
       style={getMarginChartStyle}
-      hoverAnnotation={true}
     />
   );
 };
+
+const ChartLegend = (props) => {
+  return <div>
+    Hello
+  </div>
+}
+
+const ChartTextBlock= styled('div')`
+  ml5
+`;
+
+const ChartTitle = styled('h1')`
+  f3
+`;
+
+const CaptionText = styled('p')`
+  f6 lh-copy measure-wide
+`
 
 const Chart = props => {
   return (
@@ -168,9 +183,14 @@ const Chart = props => {
         <Scatterplot data={props.data} />
       </div>
       <div style={{ display: "inline-block" }}>
-        {" "}
-        <MarginPlotY data={props.data} style={{ display: "inline-block" }} />
+        <MarginPlotY data={props.data} />
       </div>
+      <ChartTextBlock>
+        <ChartTitle>Common Screen Resolutions of Visitors to US Federal Government Sites</ChartTitle>
+        <CaptionText>
+          Static version of Ben Jones's <a href="https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1">Tableau Project</a>. Made with <a href="https://semiotic.nteract.io">Semiotic</a>.</CaptionText>
+        <ChartLegend data={props.data} style={{ display: "block" }} />
+      </ChartTextBlock>
     </div>
   );
 };

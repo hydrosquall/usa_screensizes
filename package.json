@@ -12,7 +12,8 @@
     "react-scripts": "2.1.5",
     "rxjs": "^6.4.0",
     "semiotic": "^1.17.0",
-    "switchcase": "^1.0.11"
+    "switchcase": "^1.0.11",
+    "tachyons-components": "^1.0.1"
   },
   "scripts": {
     "start": "rescripts start",
