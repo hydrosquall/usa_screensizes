@@ -23,3 +23,7 @@
 .xyframe .axis-title {
   font-size: 15px;
 }
+
+.annotation-note-label tspan {
+  font-size: 14px;
+}

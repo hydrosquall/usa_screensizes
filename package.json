@@ -8,6 +8,7 @@
     "d3-svg-legend": "^2.25.6",
     "d3blackbox": "^1.1.0",
     "react": "^16.8.3",
+    "react-annotation": "^2.1.6",
     "react-app-rewire-hot-loader": "^2.0.1",
     "react-dom": "^16.8.3",
     "react-hot-loader": "^4.7.1",

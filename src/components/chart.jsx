@@ -11,9 +11,11 @@ import { useD3 } from "d3blackbox";
 import { select } from 'd3-selection';
 import { symbol, symbolCircle, } from 'd3-shape';
 import { legendColor } from 'd3-svg-legend';
+import { timeFormat } from "d3-time-format";
 
 import withData from "./withData";
 import { getRatioColor, AXIS_COLOR, colorScale } from '../formatting/colors';
+import { scatterAnnotations } from '../annotations';
 
 import {
   CHART_WIDTH,
@@ -26,6 +28,8 @@ import {
   X_NUM_TICKS,
   Y_NUM_TICKS,
 } from '../formatting/sizes';
+
+const formatDate = timeFormat("%Y-%m-%d"); // 2019-01-28
 
 // Add brush??
 const Scatterplot = props => {
@@ -53,6 +57,7 @@ const Scatterplot = props => {
       customPointMark={metadata => <Point d={metadata.d} />} // d is for point data
       xAccessor="width"
       yAccessor="height"
+      annotations={scatterAnnotations}
       axes={[
         {
           orient: "left",
@@ -188,7 +193,7 @@ function withLegend(anchor) {
 
 const ChartLegend = (props) => {
   const refAnchor = useD3(anchor => withLegend(anchor));
-  return <svg height={200} width={500}>
+  return <svg height={100} width={500}>
     <g ref={refAnchor} transform={`translate(${0},${20})`}/>
   </svg>
 }
@@ -202,16 +207,19 @@ const ChartTitle = styled('h1')`
 `;
 
 const CaptionText = styled('p')`
-  f6 lh-copy measure-wide
+  f6 lh-copy
 `
 
 const Chart = props => {
+
+  const timeString = `${props.timeExtent.map(time => formatDate(time)).join(' and ')}`
+
   return (
     <div className="compoundChart">
       <ChartTextBlock>
-        <ChartTitle>Common Screen Resolutions of Visitors to US Federal Government Sites</ChartTitle>
+        <ChartTitle>Screen Resolutions of Visitors to US Federal Government Sites</ChartTitle>
         <CaptionText>
-          Static version of Ben Jones's <a href="https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1" target="_blank">Tableau Project</a>. Made with <a href="https://semiotic.nteract.io" target="_blank">Semiotic</a>.
+          A <a href="https://semiotic.nteract.io" target="_blank">Semiotic</a> remake of Ben Jones's <a href="https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1" target="_blank">Tableau Project</a>.
         </CaptionText>
 
       </ChartTextBlock>
@@ -226,6 +234,11 @@ const Chart = props => {
       </div>
       <ChartTextBlock>
         <ChartLegend />
+      </ChartTextBlock>
+      <ChartTextBlock>
+        <CaptionText>
+          Data updates daily from <a href="https://analytics.usa.gov/" target="_blank">analytics.gov.usa</a>. Visits occurred between {timeString}.
+        </CaptionText>
       </ChartTextBlock>
     </div>
   );
