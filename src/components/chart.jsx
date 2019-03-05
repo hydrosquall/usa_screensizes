@@ -6,45 +6,23 @@ import React from "react";
 import { XYFrame, OrdinalFrame } from "semiotic";
 import withData from "./withData";
 
-import { scaleSqrt, scaleLinear, scaleQuantile } from "d3-scale";
+import { scaleSqrt, scaleLinear } from "d3-scale";
 import { max, histogram } from "d3-array";
-import { schemeSet2 } from "d3-scale-chromatic";
 
-const CHART_WIDTH = 850;
-const CHART_HEIGHT = 600;
-const CHART_MARGIN = { left: 70, bottom: 60, top: 30, right: 10 };
-const CHART_DIMS = [CHART_WIDTH, CHART_HEIGHT];
+import { getRatioColor, AXIS_COLOR } from '../formatting/colors';
 
-const X_MARGIN_CHART_HEIGHT = 120;
-const X_MARGIN_CHART_DIMS = [CHART_WIDTH, X_MARGIN_CHART_HEIGHT];
-const X_NUM_TICKS = 100;
+import {
+  CHART_WIDTH,
+  CHART_HEIGHT,
+  CHART_DIMS,
+  CHART_MARGIN,
+  X_MARGIN_CHART_DIMS,
+  Y_MARGIN_CHART_DIMS,
 
-const Y_MARGIN_CHART_WIDTH = 120;
-const Y_MARGIN_CHART_DIMS = [Y_MARGIN_CHART_WIDTH, CHART_HEIGHT];
-const Y_NUM_TICKS = 50;
-
-const AXIS_COLOR = 'grey'
-
-const COMMON_RESOLUTIONS = new Set([
-  3 / 2,
-  4 / 3,
-  5 / 3,
-  5 / 4,
-  8 / 5,
-  16 / 9,
-  21 / 9
-]);
-
-const colorScale = scaleQuantile()
-  .domain(Array.from(COMMON_RESOLUTIONS))
-  .range(schemeSet2);
-
-const getRatioColor = point => {
-  if (point.height === 0) return "#000";
-  const ratio = point.width / point.height;
-  if (COMMON_RESOLUTIONS.has(ratio)) return colorScale(ratio);
-  return "lightgrey";
-};
+  //
+  X_NUM_TICKS,
+  Y_NUM_TICKS,
+} from '../formatting/sizes';
 
 // Add brush??
 const Scatterplot = props => {
