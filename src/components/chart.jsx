@@ -280,7 +280,7 @@ const Chart = props => {
           >
             Tableau Project
           </a>
-          .
+          , by Cameron Yick.
         </CaptionText>
 
       </ChartTextBlock>
