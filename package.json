@@ -7,6 +7,7 @@
     "d3-array": "^2.0.3",
     "d3-svg-legend": "^2.25.6",
     "d3blackbox": "^1.1.0",
+    "humanize-plus": "^1.8.2",
     "react": "^16.8.3",
     "react-annotation": "^2.1.6",
     "react-app-rewire-hot-loader": "^2.0.1",

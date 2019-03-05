@@ -12,6 +12,7 @@ import { select } from 'd3-selection';
 import { symbol, symbolCircle, } from 'd3-shape';
 import { legendColor } from 'd3-svg-legend';
 import { timeFormat } from "d3-time-format";
+import { compactInteger } from 'humanize-plus';
 
 import withData from "./withData";
 import { getRatioColor, AXIS_COLOR, colorScale } from '../formatting/colors';
@@ -30,6 +31,14 @@ import {
 } from '../formatting/sizes';
 
 const formatDate = timeFormat("%Y-%m-%d"); // 2019-01-28
+
+
+const scatterTooltip = (d) => {
+  console.log(d);
+  return <div className="tooltip-content">
+    <p>({d.width}x{d.height}) | {compactInteger(d.visits)} Visits</p>
+  </div>
+}
 
 // Add brush??
 const Scatterplot = props => {
@@ -58,6 +67,8 @@ const Scatterplot = props => {
       xAccessor="width"
       yAccessor="height"
       annotations={scatterAnnotations}
+      hoverAnnotation={true}
+      tooltipContent={scatterTooltip}
       axes={[
         {
           orient: "left",
@@ -237,7 +248,7 @@ const Chart = props => {
       </ChartTextBlock>
       <ChartTextBlock>
         <CaptionText>
-          Data updates daily from <a href="https://analytics.usa.gov/" target="_blank">analytics.gov.usa</a>. Visits occurred between {timeString}.
+          Data updates daily from <a href="https://analytics.usa.gov/" target="_blank">analytics.gov.usa</a>. Point areas correspond to total visits between {timeString}.
         </CaptionText>
       </ChartTextBlock>
     </div>

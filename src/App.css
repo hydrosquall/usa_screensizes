@@ -27,3 +27,20 @@
 .annotation-note-label tspan {
   font-size: 14px;
 }
+
+
+.tooltip-content {
+  font-size: 14px;
+  background-color: #fffff5;
+  border-radius: 3px;
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  opacity: 0.7;
+}
+
+.tooltip-content p {
+  padding: 5px 2px;
+  margin: 3px 2px;
+  opacity: 1;
+}
