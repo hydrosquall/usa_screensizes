@@ -15,3 +15,11 @@
 .xyframe .data-visualization .axis.x line {
   stroke: lightgrey;
 }
+
+.xyframe .axis-label,.axis-title {
+  font-size: 13px;
+}
+
+.xyframe .axis-title {
+  font-size: 15px;
+}

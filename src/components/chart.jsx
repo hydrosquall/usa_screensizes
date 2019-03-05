@@ -7,11 +7,10 @@ import { XYFrame, OrdinalFrame } from "semiotic";
 import { scaleSqrt, scaleLinear } from "d3-scale";
 import { max, histogram } from "d3-array";
 import styled from 'tachyons-components'
-import D3blackbox from "d3blackbox";
+import { useD3 } from "d3blackbox";
 import { select } from 'd3-selection';
 import { symbol, symbolCircle, } from 'd3-shape';
 import { legendColor } from 'd3-svg-legend';
-import { format } from 'd3-format';
 
 import withData from "./withData";
 import { getRatioColor, AXIS_COLOR, colorScale } from '../formatting/colors';
@@ -60,6 +59,10 @@ const Scatterplot = props => {
           tickFormat: d => d,
           ticks: 8,
           footer: true,
+          label: {
+            name: 'height (pixels)',
+            locationDistance: 50,
+          },
           tickLineGenerator: ({ xy }) => (
             <line
               key={`line-${xy.y1}-${xy.x1}`}
@@ -80,6 +83,10 @@ const Scatterplot = props => {
           tickFormat: d => d,
           footer: true,
           ticks: 12,
+          label: {
+            name: 'width (pixels)',
+            locationDistance: 50,
+          },
           tickLineGenerator: ({ xy }) => (
             <line
               key={`line-${xy.y1}-${xy.x1}`}
@@ -129,7 +136,6 @@ const MarginPlotX = props => {
   );
 };
 
-//
 const MarginPlotY = props => {
   const { data } = props;
   const yScale = scaleLinear()
@@ -161,14 +167,13 @@ const MarginPlotY = props => {
   );
 };
 
-
-const D3Legend = D3blackbox(function (anchor, props, state) {
-  const svg = select(anchor.current);
+function withLegend(anchor) {
+  const svg = select(anchor);
   svg.append("g")
     .attr("class", "legendQuantile")
     .attr("transform", "translate(20,20)");
 
-  const legendOrdinal = legendColor()
+  const legendQuantile = legendColor()
     .title('Aspect Ratios')
     .shapeWidth(30)
     .shape("path", symbol().type(symbolCircle).size(150)())
@@ -177,15 +182,14 @@ const D3Legend = D3blackbox(function (anchor, props, state) {
     .orient('horizontal')
     .scale(colorScale);
 
-  svg.select(".legendOrdinal")
-    .call(legendOrdinal);
-
-  // the rest of your D3 code
-});
+  svg.select(".legendQuantile")
+    .call(legendQuantile);
+}
 
 const ChartLegend = (props) => {
-  return <svg height="250" width="500">
-    <D3Legend></D3Legend>
+  const refAnchor = useD3(anchor => withLegend(anchor));
+  return <svg height={200} width={500}>
+    <g ref={refAnchor} transform={`translate(${0},${20})`}/>
   </svg>
 }
 
@@ -207,7 +211,9 @@ const Chart = props => {
       <ChartTextBlock>
         <ChartTitle>Common Screen Resolutions of Visitors to US Federal Government Sites</ChartTitle>
         <CaptionText>
-          Static version of Ben Jones's <a href="https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1" target="_blank">Tableau Project</a>. Made with <a href="https://semiotic.nteract.io" target="_blank">Semiotic</a>.</CaptionText>
+          Static version of Ben Jones's <a href="https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1" target="_blank">Tableau Project</a>. Made with <a href="https://semiotic.nteract.io" target="_blank">Semiotic</a>.
+        </CaptionText>
+
       </ChartTextBlock>
       <div style={{ display: "inline-block" }}>
       <MarginPlotX data={props.data} />
@@ -219,9 +225,8 @@ const Chart = props => {
         <MarginPlotY data={props.data} />
       </div>
       <ChartTextBlock>
-        <ChartLegend data={props.data} style={{ display: "block" }} />
+        <ChartLegend />
       </ChartTextBlock>
-
     </div>
   );
 };
