@@ -7,9 +7,14 @@ import { XYFrame, OrdinalFrame } from "semiotic";
 import { scaleSqrt, scaleLinear } from "d3-scale";
 import { max, histogram } from "d3-array";
 import styled from 'tachyons-components'
+import D3blackbox from "d3blackbox";
+import { select } from 'd3-selection';
+import { symbol, symbolCircle, } from 'd3-shape';
+import { legendColor } from 'd3-svg-legend';
+import { format } from 'd3-format';
 
 import withData from "./withData";
-import { getRatioColor, AXIS_COLOR } from '../formatting/colors';
+import { getRatioColor, AXIS_COLOR, colorScale } from '../formatting/colors';
 
 import {
   CHART_WIDTH,
@@ -27,7 +32,7 @@ import {
 const Scatterplot = props => {
   const radiusScale = scaleSqrt()
     .domain([0, max(props.data, d => d.visits)])
-    .range([3, 12]);
+    .range([2, 10]);
 
   // Custom component because we need the radius to scale based on the data that came in.
   const Point = props => {
@@ -35,6 +40,7 @@ const Scatterplot = props => {
       <circle
         r={`${radiusScale(props.d.visits)}`}
         stroke={getRatioColor(props.d)}
+        strokeWidth={1.5}
         fill="none"
       />
     );
@@ -155,10 +161,32 @@ const MarginPlotY = props => {
   );
 };
 
+
+const D3Legend = D3blackbox(function (anchor, props, state) {
+  const svg = select(anchor.current);
+  svg.append("g")
+    .attr("class", "legendQuantile")
+    .attr("transform", "translate(20,20)");
+
+  const legendOrdinal = legendColor()
+    .title('Aspect Ratios')
+    .shapeWidth(30)
+    .shape("path", symbol().type(symbolCircle).size(150)())
+    .shapePadding(40)
+    .labels(['3:2', '4:3', '5:3', '5:4', '8:5', '16:9', '21:9', "Other"])
+    .orient('horizontal')
+    .scale(colorScale);
+
+  svg.select(".legendOrdinal")
+    .call(legendOrdinal);
+
+  // the rest of your D3 code
+});
+
 const ChartLegend = (props) => {
-  return <div>
-    Hello
-  </div>
+  return <svg height="250" width="500">
+    <D3Legend></D3Legend>
+  </svg>
 }
 
 const ChartTextBlock= styled('div')`
@@ -176,6 +204,11 @@ const CaptionText = styled('p')`
 const Chart = props => {
   return (
     <div className="compoundChart">
+      <ChartTextBlock>
+        <ChartTitle>Common Screen Resolutions of Visitors to US Federal Government Sites</ChartTitle>
+        <CaptionText>
+          Static version of Ben Jones's <a href="https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1" target="_blank">Tableau Project</a>. Made with <a href="https://semiotic.nteract.io" target="_blank">Semiotic</a>.</CaptionText>
+      </ChartTextBlock>
       <div style={{ display: "inline-block" }}>
       <MarginPlotX data={props.data} />
       </div>
@@ -186,11 +219,9 @@ const Chart = props => {
         <MarginPlotY data={props.data} />
       </div>
       <ChartTextBlock>
-        <ChartTitle>Common Screen Resolutions of Visitors to US Federal Government Sites</ChartTitle>
-        <CaptionText>
-          Static version of Ben Jones's <a href="https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1">Tableau Project</a>. Made with <a href="https://semiotic.nteract.io">Semiotic</a>.</CaptionText>
         <ChartLegend data={props.data} style={{ display: "block" }} />
       </ChartTextBlock>
+
     </div>
   );
 };

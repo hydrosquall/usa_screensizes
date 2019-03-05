@@ -14,7 +14,7 @@ const COMMON_RESOLUTIONS = new Set([
 export const AXIS_COLOR = 'grey'
 
 
-const colorScale = scaleQuantile()
+export const colorScale = scaleQuantile()
   .domain(Array.from(COMMON_RESOLUTIONS))
   .range(schemeSet2);
 
