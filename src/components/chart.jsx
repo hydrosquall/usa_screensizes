@@ -6,19 +6,18 @@ import React from "react";
 import { XYFrame, OrdinalFrame } from "semiotic";
 import { scaleSqrt, scaleLinear } from "d3-scale";
 import { max, histogram } from "d3-array";
-import styled from 'tachyons-components'
+import styled from "tachyons-components";
 import { useD3 } from "d3blackbox";
-import { select } from 'd3-selection';
-import { symbol, symbolCircle, } from 'd3-shape';
-import { legendColor } from 'd3-svg-legend';
+import { select } from "d3-selection";
+import { symbol, symbolCircle } from "d3-shape";
+import { legendColor } from "d3-svg-legend";
 import { timeFormat } from "d3-time-format";
-import { compactInteger } from 'humanize-plus';
-import { BounceLoader } from 'react-spinners';
-
+import { compactInteger } from "humanize-plus";
+import SVG from "react-inlinesvg";
 
 import withData from "./withData";
-import { getRatioColor, AXIS_COLOR, colorScale } from '../formatting/colors';
-import { scatterAnnotations } from '../annotations';
+import { getRatioColor, AXIS_COLOR, colorScale } from "../formatting/colors";
+import { scatterAnnotations } from "../annotations";
 
 import {
   CHART_WIDTH,
@@ -29,17 +28,20 @@ import {
   Y_MARGIN_CHART_DIMS,
   //
   X_NUM_TICKS,
-  Y_NUM_TICKS,
-} from '../formatting/sizes';
+  Y_NUM_TICKS
+} from "../formatting/sizes";
 
 const formatDate = timeFormat("%Y-%m-%d"); // 2019-01-28
 
-
-const scatterTooltip = (d) => {
-  return <div className="tooltip-content">
-    <p>({d.width}x{d.height}) | {compactInteger(d.visits)} Visits</p>
-  </div>
-}
+const scatterTooltip = d => {
+  return (
+    <div className="tooltip-content">
+      <p>
+        ({d.width}x{d.height}) | {compactInteger(d.visits)} Visits
+      </p>
+    </div>
+  );
+};
 
 // Add brush??
 const Scatterplot = props => {
@@ -77,8 +79,8 @@ const Scatterplot = props => {
           ticks: 8,
           footer: true,
           label: {
-            name: 'height (pixels)',
-            locationDistance: 50,
+            name: "height (pixels)",
+            locationDistance: 50
           },
           tickLineGenerator: ({ xy }) => (
             <line
@@ -101,8 +103,8 @@ const Scatterplot = props => {
           footer: true,
           ticks: 12,
           label: {
-            name: 'width (pixels)',
-            locationDistance: 50,
+            name: "width (pixels)",
+            locationDistance: 50
           },
           tickLineGenerator: ({ xy }) => (
             <line
@@ -124,7 +126,7 @@ const Scatterplot = props => {
   );
 };
 
-const getMarginChartStyle = (d) => ({ fill: 'lightgrey', stroke: 'none' });
+const getMarginChartStyle = d => ({ fill: "lightgrey", stroke: "none" });
 
 // TODO: stacking for margin plots... do little grouping in the bins so that the colors come out correctly.
 const MarginPlotX = props => {
@@ -142,7 +144,12 @@ const MarginPlotX = props => {
   return (
     <OrdinalFrame
       size={X_MARGIN_CHART_DIMS}
-      margin={{ left: CHART_MARGIN.left, bottom: 0, top: 50, right: CHART_MARGIN.right }}
+      margin={{
+        left: CHART_MARGIN.left,
+        bottom: 0,
+        top: 50,
+        right: CHART_MARGIN.right
+      }}
       data={bins}
       projection={"vertical"}
       type={"bar"}
@@ -186,45 +193,53 @@ const MarginPlotY = props => {
 
 function withLegend(anchor) {
   const svg = select(anchor);
-  svg.append("g")
+  svg
+    .append("g")
     .attr("class", "legendQuantile")
     .attr("transform", "translate(20,20)");
 
   const legendQuantile = legendColor()
-    .title('Aspect Ratios')
+    .title("Aspect Ratios")
     .shapeWidth(30)
-    .shape("path", symbol().type(symbolCircle).size(150)())
+    .shape(
+      "path",
+      symbol()
+        .type(symbolCircle)
+        .size(150)()
+    )
     .shapePadding(40)
-    .labels(['3:2', '4:3', '5:3', '5:4', '8:5', '16:9', '21:9', "Other"])
-    .orient('horizontal')
+    .labels(["3:2", "4:3", "5:3", "5:4", "8:5", "16:9", "21:9", "Other"])
+    .orient("horizontal")
     .scale(colorScale);
 
-  svg.select(".legendQuantile")
-    .call(legendQuantile);
+  svg.select(".legendQuantile").call(legendQuantile);
 }
 
-const ChartLegend = (props) => {
+const ChartLegend = props => {
   const refAnchor = useD3(anchor => withLegend(anchor));
-  return <svg height={100} width={500}>
-    <g ref={refAnchor} transform={`translate(${0},${20})`}/>
-  </svg>
-}
+  return (
+    <svg height={100} width={500}>
+      <g ref={refAnchor} transform={`translate(${0},${20})`} />
+    </svg>
+  );
+};
 
-const ChartTextBlock= styled('div')`
+const ChartTextBlock = styled("div")`
   ml5
 `;
 
-const ChartTitle = styled('h1')`
+const ChartTitle = styled("h1")`
   f3
 `;
 
-const CaptionText = styled('p')`
+const CaptionText = styled("p")`
   f6 lh-copy
-`
+`;
 
 const Chart = props => {
-
-  const timeString = `${props.timeExtent.map(time => formatDate(time)).join(' and ')}`
+  const timeString = `${props.timeExtent
+    .map(time => formatDate(time))
+    .join(" and ")}`;
 
   const { data } = props;
 
@@ -239,30 +254,45 @@ const Chart = props => {
       <div style={{ display: "inline-block" }}>
         <MarginPlotY data={data} />
       </div>
-
     </React.Fragment>
   );
 
   return (
     <div className="compoundChart">
       <ChartTextBlock>
-        <ChartTitle>Screen Resolutions of Visitors to US Federal Government Sites</ChartTitle>
+        <ChartTitle>
+          Screen Resolutions of Visitors to US Federal Government Sites
+        </ChartTitle>
         <CaptionText>
-          A <a href="https://semiotic.nteract.io" rel="noopener noreferrer" target="_blank">Semiotic</a> remake of Ben Jones's <a href="https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1" rel="noopener noreferrer" target="_blank">Tableau Project</a>.
+          A{" "}
+          <a
+            href="https://semiotic.nteract.io"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Semiotic
+          </a>{" "}
+          remake of Ben Jones's{" "}
+          <a
+            href="https://public.tableau.com/profile/ben.jones#!/vizhome/ScreenResolutions/Dashboard1"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Tableau Project
+          </a>
+          .
         </CaptionText>
 
       </ChartTextBlock>
 
-      <div className='appBody'>
-      {data.length > 0 ?
-          charts : <ChartTextBlock>
-
-            <CaptionText>
-              Data is on its way!
-        </CaptionText>
-
+      <div className="appBody">
+        {data.length > 0 ? (
+          charts
+        ) : (
+          <ChartTextBlock>
+            <CaptionText>Data is on its way!</CaptionText>
           </ChartTextBlock>
-      }
+        )}
       </div>
 
       <ChartTextBlock>
@@ -270,8 +300,17 @@ const Chart = props => {
       </ChartTextBlock>
       <ChartTextBlock>
         <CaptionText>
-          Data updates daily from <a href="https://analytics.usa.gov/" rel="noopener noreferrer" target="_blank">analytics.gov.usa</a>. Point areas correspond to total visits between {timeString}.
+          Data updates daily from{" "}
+          <a
+            href="https://analytics.usa.gov/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            analytics.gov.usa
+          </a>
+          . Point areas correspond to total visits between {timeString}.
         </CaptionText>
+        <SVG src="./usa.svg" />
       </ChartTextBlock>
     </div>
   );
