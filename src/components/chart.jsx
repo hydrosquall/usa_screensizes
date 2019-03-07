@@ -16,8 +16,10 @@ import { compactInteger } from "humanize-plus";
 import SVG from "react-inlinesvg";
 
 import withData from "./withData";
-import { getRatioColor, AXIS_COLOR, colorScale } from "../formatting/colors";
+import { getRatioColor, AXIS_COLOR, colorScale, POINT_FILL_COLOR } from "../formatting/colors";
 import { scatterAnnotations } from "../annotations";
+
+import {BackgroundGraphics} from './backgroundGraphics';
 
 import {
   CHART_WIDTH,
@@ -56,10 +58,13 @@ const Scatterplot = props => {
         r={`${radiusScale(props.d.visits)}`}
         stroke={getRatioColor(props.d)}
         strokeWidth={1.5}
-        fill="none"
+        fill={POINT_FILL_COLOR}
+        opacity={0.4}
       />
     );
   };
+
+  // const backgroundGraphics = getBackgroundGraphics()
 
   return (
     <XYFrame
@@ -72,6 +77,7 @@ const Scatterplot = props => {
       annotations={scatterAnnotations}
       hoverAnnotation={true}
       tooltipContent={scatterTooltip}
+      backgroundGraphics={BackgroundGraphics}
       axes={[
         {
           orient: "left",
@@ -195,10 +201,10 @@ function withLegend(anchor) {
   const svg = select(anchor);
   svg
     .append("g")
-    .attr("class", "legendQuantile")
+    .attr("class", "legendOrdinal")
     .attr("transform", "translate(20,20)");
 
-  const legendQuantile = legendColor()
+  const legendOrdinal = legendColor()
     .title("Aspect Ratios")
     .shapeWidth(30)
     .shape(
@@ -212,7 +218,7 @@ function withLegend(anchor) {
     .orient("horizontal")
     .scale(colorScale);
 
-  svg.select(".legendQuantile").call(legendQuantile);
+  svg.select(".legendOrdinal").call(legendOrdinal);
 }
 
 const ChartLegend = props => {
