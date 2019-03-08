@@ -16,10 +16,10 @@ import { compactInteger } from "humanize-plus";
 import SVG from "react-inlinesvg";
 
 import withData from "./withData";
-import { getRatioColor, AXIS_COLOR, colorScale, POINT_FILL_COLOR } from "../formatting/colors";
+import { getRatioColor, AXIS_COLOR, colorScale, POINT_FILL_COLOR, COMMON_RESOLUTIONS } from "../formatting/colors";
 import { scatterAnnotations } from "../annotations";
 
-import { getBackgroundGraphics } from './backgroundGraphics';
+// import { getBackgroundGraphics } from './backgroundGraphics';
 
 import {
   CHART_WIDTH,
@@ -32,6 +32,9 @@ import {
   X_NUM_TICKS,
   Y_NUM_TICKS
 } from "../formatting/sizes";
+
+const MAX_X_EXTENT = 3900;
+const MAX_Y_EXTENT = 3100;
 
 const formatDate = timeFormat("%Y-%m-%d"); // 2019-01-28
 
@@ -68,15 +71,25 @@ const Scatterplot = props => {
   // const xExtent = [CHART_MARGIN.left, CHART_DIMS[0] - CHART_MARGIN.right];
   // const yExtent = [CHART_MARGIN.top, CHART_DIMS[1] - CHART_MARGIN.bottom];
   // const BackgroundGraphics = getBackgroundGraphics(props.data, xExtent, yExtent);
+  const bandWidth = 50;
+  const bound = 4000;
+  const summaries = COMMON_RESOLUTIONS.map(resolution => ({
+    color: colorScale(resolution),
+    coordinates: [
+      { width: 0, height: 0},
+      { width: bound, height: bound * (1/resolution) + bandWidth },
+      { width: bound, height: bound * (1/resolution) - bandWidth },
+    ]
+  }));
 
-  const summaries = [
-    {
-      color: "lightgreen",
-      coordinates: [{ width: 0, height: 0 }, { width: 3600, height: 3200 }, { width: 3600, height: 3100 }]},
-    {
-      color: "pink", coordinates: [{ width: 0, height: 0 }, { width: 3700, height: 3200 }, { width: 3700, height: 3150 }]
-    }
-  ];
+  // const summaries = [
+  //   {
+  //     color: "lightgreen",
+  //     coordinates: [{ width: 0, height: 0 }, { width: 3900, height: 3200 }, { width: 3900, height: 3100 }]},
+  //   {
+  //     color: "pink", coordinates: [{ width: 0, height: 0 }, { width: 3700, height: 3200 }, { width: 3700, height: 3150 }]
+  //   }
+  // ];
 
   return (
     <XYFrame
@@ -87,12 +100,14 @@ const Scatterplot = props => {
       customPointMark={metadata => <Point d={metadata.d} />} // d is for point data
       xAccessor="width"
       yAccessor="height"
+      xExtent={[0, MAX_X_EXTENT]}
+      yExtent={[0, MAX_Y_EXTENT]}
       annotations={scatterAnnotations}
       hoverAnnotation={true}
       tooltipContent={scatterTooltip}
       // backgroundGraphics={BackgroundGraphics}
       summaries={summaries}
-      summaryStyle={d => ({ fill: d.color })}
+      summaryStyle={d => ({ fill: d.color , opacity: 0.35})}
       axes={[
         {
           orient: "left",
@@ -157,7 +172,7 @@ const MarginPlotX = props => {
     .range([CHART_MARGIN.left, CHART_WIDTH - CHART_MARGIN.right]);
 
   const makeHistogram = histogram()
-    .domain(xScale.domain())
+    .domain([0, MAX_X_EXTENT])
     .thresholds(xScale.ticks(X_NUM_TICKS))
     .value(d => d.width);
   const bins = makeHistogram(data);
@@ -188,7 +203,7 @@ const MarginPlotY = props => {
     .range([CHART_MARGIN.top, CHART_HEIGHT - CHART_MARGIN.bottom]);
 
   const makeHistogram = histogram()
-    .domain(yScale.domain())
+    .domain([-MAX_Y_EXTENT, 0])
     .thresholds(yScale.ticks(Y_NUM_TICKS))
     .value(d => -d.height);
   const bins = makeHistogram(data);
