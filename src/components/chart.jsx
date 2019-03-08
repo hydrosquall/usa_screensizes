@@ -64,9 +64,10 @@ const Scatterplot = props => {
     );
   };
 
-  const xExtent = [CHART_MARGIN.left, CHART_DIMS[0] - CHART_MARGIN.right];
-  const yExtent = [CHART_MARGIN.top, CHART_DIMS[1] - CHART_MARGIN.bottom];
-  const BackgroundGraphics = getBackgroundGraphics(props.data, xExtent, yExtent);
+  // needs local modified semiotic copy to work.
+  // const xExtent = [CHART_MARGIN.left, CHART_DIMS[0] - CHART_MARGIN.right];
+  // const yExtent = [CHART_MARGIN.top, CHART_DIMS[1] - CHART_MARGIN.bottom];
+  // const BackgroundGraphics = getBackgroundGraphics(props.data, xExtent, yExtent);
 
   const summaries = [
     {
@@ -88,7 +89,7 @@ const Scatterplot = props => {
       annotations={scatterAnnotations}
       hoverAnnotation={true}
       tooltipContent={scatterTooltip}
-      backgroundGraphics={BackgroundGraphics}
+      // backgroundGraphics={BackgroundGraphics}
       summaries={summaries}
       summaryStyle={d => ({ fill: d.color })}
       axes={[
