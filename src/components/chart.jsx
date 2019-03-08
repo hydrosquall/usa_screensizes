@@ -17,9 +17,7 @@ import SVG from "react-inlinesvg";
 
 import withData from "./withData";
 import { getRatioColor, AXIS_COLOR, colorScale, POINT_FILL_COLOR, COMMON_RESOLUTIONS } from "../formatting/colors";
-import { scatterAnnotations } from "../annotations";
-
-// import { getBackgroundGraphics } from './backgroundGraphics';
+import { annotations } from "../annotations";
 
 import {
   CHART_WIDTH,
@@ -68,9 +66,6 @@ const Scatterplot = props => {
   };
 
   // needs local modified semiotic copy to work.
-  // const xExtent = [CHART_MARGIN.left, CHART_DIMS[0] - CHART_MARGIN.right];
-  // const yExtent = [CHART_MARGIN.top, CHART_DIMS[1] - CHART_MARGIN.bottom];
-  // const BackgroundGraphics = getBackgroundGraphics(props.data, xExtent, yExtent);
   const bandWidth = 50;
   const bound = 4000;
   const summaries = COMMON_RESOLUTIONS.map(resolution => ({
@@ -81,15 +76,6 @@ const Scatterplot = props => {
       { width: bound, height: bound * (1/resolution) - bandWidth },
     ]
   }));
-
-  // const summaries = [
-  //   {
-  //     color: "lightgreen",
-  //     coordinates: [{ width: 0, height: 0 }, { width: 3900, height: 3200 }, { width: 3900, height: 3100 }]},
-  //   {
-  //     color: "pink", coordinates: [{ width: 0, height: 0 }, { width: 3700, height: 3200 }, { width: 3700, height: 3150 }]
-  //   }
-  // ];
 
   return (
     <XYFrame
@@ -102,10 +88,9 @@ const Scatterplot = props => {
       yAccessor="height"
       xExtent={[0, MAX_X_EXTENT]}
       yExtent={[0, MAX_Y_EXTENT]}
-      annotations={scatterAnnotations}
+      annotations={annotations}
       hoverAnnotation={true}
       tooltipContent={scatterTooltip}
-      // backgroundGraphics={BackgroundGraphics}
       summaries={summaries}
       summaryStyle={d => ({ fill: d.color , opacity: 0.35})}
       axes={[
