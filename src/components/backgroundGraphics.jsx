@@ -1,36 +1,44 @@
 import React from 'react';
+import { scaleLinear } from "d3-scale";
+import { XYFrame } from "semiotic";
 
 import {COMMON_RESOLUTIONS, colorScale} from '../formatting/colors';
 
-// Add some range bands...
-export const BackgroundGraphics = (props) => {
+// Return React Component
+export const getBackgroundGraphics = (data, xExtent, yExtent) => (props) => {
   const { margin , size } = props;
   const [ width, height ] = size;
-
-  // const getArea = area()
-  //                   .x0(margin.left)
-  //                   .x1(width - margin.right)
-  //                   .y0(10)
-  //                   .y1(50);
 
   const innerHeight = height - (margin.bottom);
   const innerWidth = width - (margin.left + margin.right);
 
-  // console.log(innerWidth/ innerHeight);
-  // console.log({ size, width, height})
-
-
   const stylesFromResolution = (resolution) => {
-    const bottomLeft = `${margin.left},${margin.top}`;
+    const bottomLeft = `${margin.left},${height - margin.bottom}`;
+    // const bottomLeft = `0,0`;
     // x and y are flipped because of the transform
-    const bandMargin =  30;
-
+    const bandMargin = 35;
     const stripePageWidth = width;
 
-    const rightYIntercept = 330 + resolution * (innerWidth);
+    // const rightYIntercept = 330 * 1.49 + 0 * (innerWidth);
+    // const topRight = `${rightYIntercept + bandMargin},${stripePageWidth}`;
+    // const topLeft = `${stripePageWidth},${rightYIntercept - bandMargin}`;
+    console.log(innerWidth);
 
-    const topRight = `${rightYIntercept + bandMargin},${stripePageWidth}`;
-    const topLeft = `${rightYIntercept - bandMargin},${stripePageWidth}`;
+    console.log('x',props.xScale.domain(), props.xScale.range());
+    console.log('y', props.yScale.domain(), props.yScale.range());
+    const topRight = `${props.xScale(2000) + margin.left},${props.yScale(2000* (1/resolution) - margin.bottom + bandMargin)}`
+    // const topRight = `${props.xScale(2000)},${props.yScale(4000 / 1.49) + bandMargin}`
+    // const topRight = `${stripePageWidth},${rightYIntercept + bandMargin}`;
+    const topLeft = `${props.xScale(2000) + margin.left},${props.yScale(2000 * (1 / resolution) - margin.bottom -bandMargin)}`;
+    // const topLeft = `${props.xScale(2000)},${props.yScale(4000 / 1.49) - bandMargin}`;
+    // const topLeft = `${props.xScale(2000)},${props.yScale(4000 / 1.49) - bandMargin}`;
+
+    // const rightYIntercept = innerWidth * resolution - innerWidth;
+    // console.log(rightYIntercept, bandMargin);
+    // const topRight = `${stripePageWidth},${rightYIntercept + bandMargin}`;
+    // const topLeft = `${stripePageWidth},${rightYIntercept - bandMargin}`;
+
+
     const color = colorScale(resolution);
     return {
       bottomLeft,
@@ -41,15 +49,25 @@ export const BackgroundGraphics = (props) => {
   }
 
   const resolutions = COMMON_RESOLUTIONS;
-  return (<g >
-    {/* <rect x={margin.left}
-          y={innerHeight}
-          height={rectHeight}
-          width="50"
-          fill="red"/> */}
+  console.log(props);
+
+
+  // return (<XYFrame
+  //   size={size}
+  //   margin={margin}
+  //   points={data}
+  //   customPointMark={metadata => <circle fill='#000000' r={100} stroke="black"/>} // d is for point data
+  //   xAccessor="width"
+  //   yAccessor="height"
+  // />)
+
+
+  return (<g className="ratioShades">
     {resolutions.map((resolution, i) => {
-      const {bottomLeft, topLeft, topRight, color} = stylesFromResolution(resolution);
-      const transform = `scale(1,-1) translate(${0},${-(height-margin.top)})`;
+      const { bottomLeft, topLeft, topRight, color} = stylesFromResolution(resolution);
+      // const transform = `scale(1,-1) translate(${0},${-(height-margin.top)})`;
+      const transform = ``;
+      // const transform = `translate(${margin.left},${margin.top}) rotate(270) translate(${-width},${height})`;
 
       return <polygon
         points={`${bottomLeft} ${topLeft} ${topRight}`}
@@ -60,7 +78,6 @@ export const BackgroundGraphics = (props) => {
         data={`${resolution}`}
       />
     })}
-
   </g>)
 
 };

@@ -19,7 +19,7 @@ import withData from "./withData";
 import { getRatioColor, AXIS_COLOR, colorScale, POINT_FILL_COLOR } from "../formatting/colors";
 import { scatterAnnotations } from "../annotations";
 
-import {BackgroundGraphics} from './backgroundGraphics';
+import { getBackgroundGraphics } from './backgroundGraphics';
 
 import {
   CHART_WIDTH,
@@ -64,7 +64,18 @@ const Scatterplot = props => {
     );
   };
 
-  // const backgroundGraphics = getBackgroundGraphics()
+  const xExtent = [CHART_MARGIN.left, CHART_DIMS[0] - CHART_MARGIN.right];
+  const yExtent = [CHART_MARGIN.top, CHART_DIMS[1] - CHART_MARGIN.bottom];
+  const BackgroundGraphics = getBackgroundGraphics(props.data, xExtent, yExtent);
+
+  const summaries = [
+    {
+      color: "lightgreen",
+      coordinates: [{ width: 0, height: 0 }, { width: 3600, height: 3200 }, { width: 3600, height: 3100 }]},
+    {
+      color: "pink", coordinates: [{ width: 0, height: 0 }, { width: 3700, height: 3200 }, { width: 3700, height: 3150 }]
+    }
+  ];
 
   return (
     <XYFrame
@@ -78,6 +89,8 @@ const Scatterplot = props => {
       hoverAnnotation={true}
       tooltipContent={scatterTooltip}
       backgroundGraphics={BackgroundGraphics}
+      summaries={summaries}
+      summaryStyle={d => ({ fill: d.color })}
       axes={[
         {
           orient: "left",

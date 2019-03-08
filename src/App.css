@@ -50,3 +50,7 @@
   height: 720;
   width: 850;
 }
+
+.ratioShades  {
+  transform: scale(1,-1),
+}
