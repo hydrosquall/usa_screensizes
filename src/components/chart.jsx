@@ -80,6 +80,7 @@ const Scatterplot = props => {
 
   return (
     <XYFrame
+      matte={true}
       size={CHART_DIMS}
       margin={CHART_MARGIN}
       points={props.data}
