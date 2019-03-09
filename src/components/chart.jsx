@@ -333,7 +333,7 @@ const Chart = ({ data, timeExtent }) => {
           . Point areas correspond to total visits between {timeString}.
         </CaptionText>
         <CaptionText>
-          Read about how this graphic was made
+          Read about how this graphic was made{" "}
           <a
             href="https://www.serendipidata.com/posts/margin-charts-with-semiotic"
             rel="noopener noreferrer"
