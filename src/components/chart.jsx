@@ -13,10 +13,16 @@ import { symbol, symbolCircle } from "d3-shape";
 import { legendColor } from "d3-svg-legend";
 import { timeFormat } from "d3-time-format";
 import { compactInteger } from "humanize-plus";
-import SVG from "react-inlinesvg";
 
 import withData from "./withData";
-import { getRatioColor, AXIS_COLOR, colorScale, POINT_FILL_COLOR, COMMON_RESOLUTIONS } from "../formatting/colors";
+import {
+  getRatioColor,
+  AXIS_COLOR,
+  colorScale,
+  POINT_FILL_COLOR,
+  COMMON_RESOLUTIONS,
+  COMMON_RESOLUTION_LABELS
+} from "../formatting/colors";
 import { annotations } from "../annotations";
 
 import {
@@ -52,7 +58,7 @@ const Scatterplot = props => {
     .domain([0, max(props.data, d => d.visits)])
     .range([2, 10]);
 
-  // Custom component because we need the radius to scale based on the data that came in.
+  // Custom component because we need the radius to scale based on the data attributes
   const Point = props => {
     return (
       <circle
@@ -65,15 +71,14 @@ const Scatterplot = props => {
     );
   };
 
-  // needs local modified semiotic copy to work.
   const bandWidth = 50;
   const bound = 4000;
   const summaries = COMMON_RESOLUTIONS.map(resolution => ({
     color: colorScale(resolution),
     coordinates: [
-      { width: 0, height: 0},
-      { width: bound, height: bound * (1/resolution) + bandWidth },
-      { width: bound, height: bound * (1/resolution) - bandWidth },
+      { width: 0, height: 0 },
+      { width: bound, height: bound * (1 / resolution) + bandWidth },
+      { width: bound, height: bound * (1 / resolution) - bandWidth }
     ]
   }));
 
@@ -92,7 +97,7 @@ const Scatterplot = props => {
       hoverAnnotation={true}
       tooltipContent={scatterTooltip}
       summaries={summaries}
-      summaryStyle={d => ({ fill: d.color , opacity: 0.35})}
+      summaryStyle={d => ({ fill: d.color, opacity: 0.35 })}
       axes={[
         {
           orient: "left",
@@ -149,7 +154,6 @@ const Scatterplot = props => {
 
 const getMarginChartStyle = d => ({ fill: "lightgrey", stroke: "none" });
 
-// TODO: stacking for margin plots... do little grouping in the bins so that the colors come out correctly.
 const MarginPlotX = props => {
   const { data } = props;
   const xScale = scaleLinear()
@@ -229,7 +233,7 @@ function withLegend(anchor) {
         .size(150)()
     )
     .shapePadding(40)
-    .labels(["3:2", "4:3", "5:3", "5:4", "8:5", "16:9", "21:9", "Other"])
+    .labels(COMMON_RESOLUTION_LABELS)
     .orient("horizontal")
     .scale(colorScale);
 
@@ -257,12 +261,10 @@ const CaptionText = styled("p")`
   f6 lh-copy
 `;
 
-const Chart = props => {
-  const timeString = `${props.timeExtent
+const Chart = ({ data, timeExtent }) => {
+  const timeString = `${timeExtent
     .map(time => formatDate(time))
     .join(" and ")}`;
-
-  const { data } = props;
 
   const charts = (
     <React.Fragment>
@@ -303,7 +305,6 @@ const Chart = props => {
           </a>
           , by Cameron Yick.
         </CaptionText>
-
       </ChartTextBlock>
 
       <div className="appBody">
@@ -331,7 +332,16 @@ const Chart = props => {
           </a>
           . Point areas correspond to total visits between {timeString}.
         </CaptionText>
-        <SVG src="./usa.svg" />
+        <CaptionText>
+          Read about how this graphic was made
+          <a
+            href="https://www.serendipidata.com/posts/margin-charts-with-semiotic"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            in this blog post.
+          </a>
+        </CaptionText>
       </ChartTextBlock>
     </div>
   );

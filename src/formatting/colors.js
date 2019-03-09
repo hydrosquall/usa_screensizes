@@ -11,10 +11,21 @@ export const COMMON_RESOLUTIONS = [
   21 / 9
 ];
 
+export const COMMON_RESOLUTION_LABELS = [
+  "3:2",
+  "4:3",
+  "5:3",
+  "5:4",
+  "8:5",
+  "16:9",
+  "21:9",
+  "Other"
+];
+
 const COMMON_RESOLUTIONS_SET = new Set(COMMON_RESOLUTIONS);
 
-export const AXIS_COLOR = 'grey'
-export const POINT_FILL_COLOR = 'rgb(64, 54, 74)';
+export const AXIS_COLOR = "grey";
+export const POINT_FILL_COLOR = "rgb(64, 54, 74)";
 
 export const colorScale = scaleOrdinal()
   .domain(COMMON_RESOLUTIONS)
