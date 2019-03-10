@@ -13,11 +13,17 @@ import { symbol, symbolCircle } from "d3-shape";
 import { legendColor } from "d3-svg-legend";
 import { timeFormat } from "d3-time-format";
 import { compactInteger } from "humanize-plus";
-import SVG from "react-inlinesvg";
 
 import withData from "./withData";
-import { getRatioColor, AXIS_COLOR, colorScale } from "../formatting/colors";
-import { scatterAnnotations } from "../annotations";
+import {
+  getRatioColor,
+  AXIS_COLOR,
+  colorScale,
+  POINT_FILL_COLOR,
+  COMMON_RESOLUTIONS,
+  COMMON_RESOLUTION_LABELS
+} from "../formatting/colors";
+import { annotations } from "../annotations";
 
 import {
   CHART_WIDTH,
@@ -30,6 +36,9 @@ import {
   X_NUM_TICKS,
   Y_NUM_TICKS
 } from "../formatting/sizes";
+
+const MAX_X_EXTENT = 3900;
+const MAX_Y_EXTENT = 3100;
 
 const formatDate = timeFormat("%Y-%m-%d"); // 2019-01-28
 
@@ -49,29 +58,46 @@ const Scatterplot = props => {
     .domain([0, max(props.data, d => d.visits)])
     .range([2, 10]);
 
-  // Custom component because we need the radius to scale based on the data that came in.
+  // Custom component because we need the radius to scale based on the data attributes
   const Point = props => {
     return (
       <circle
         r={`${radiusScale(props.d.visits)}`}
         stroke={getRatioColor(props.d)}
         strokeWidth={1.5}
-        fill="none"
+        fill={POINT_FILL_COLOR}
+        opacity={0.4}
       />
     );
   };
 
+  const bandWidth = 50;
+  const bound = 4000;
+  const summaries = COMMON_RESOLUTIONS.map(resolution => ({
+    color: colorScale(resolution),
+    coordinates: [
+      { width: 0, height: 0 },
+      { width: bound, height: bound * (1 / resolution) + bandWidth },
+      { width: bound, height: bound * (1 / resolution) - bandWidth }
+    ]
+  }));
+
   return (
     <XYFrame
+      matte={true}
       size={CHART_DIMS}
       margin={CHART_MARGIN}
       points={props.data}
       customPointMark={metadata => <Point d={metadata.d} />} // d is for point data
       xAccessor="width"
       yAccessor="height"
-      annotations={scatterAnnotations}
+      xExtent={[0, MAX_X_EXTENT]}
+      yExtent={[0, MAX_Y_EXTENT]}
+      annotations={annotations}
       hoverAnnotation={true}
       tooltipContent={scatterTooltip}
+      summaries={summaries}
+      summaryStyle={d => ({ fill: d.color, opacity: 0.35 })}
       axes={[
         {
           orient: "left",
@@ -128,7 +154,6 @@ const Scatterplot = props => {
 
 const getMarginChartStyle = d => ({ fill: "lightgrey", stroke: "none" });
 
-// TODO: stacking for margin plots... do little grouping in the bins so that the colors come out correctly.
 const MarginPlotX = props => {
   const { data } = props;
   const xScale = scaleLinear()
@@ -136,7 +161,7 @@ const MarginPlotX = props => {
     .range([CHART_MARGIN.left, CHART_WIDTH - CHART_MARGIN.right]);
 
   const makeHistogram = histogram()
-    .domain(xScale.domain())
+    .domain([0, MAX_X_EXTENT])
     .thresholds(xScale.ticks(X_NUM_TICKS))
     .value(d => d.width);
   const bins = makeHistogram(data);
@@ -167,7 +192,7 @@ const MarginPlotY = props => {
     .range([CHART_MARGIN.top, CHART_HEIGHT - CHART_MARGIN.bottom]);
 
   const makeHistogram = histogram()
-    .domain(yScale.domain())
+    .domain([-MAX_Y_EXTENT, 0])
     .thresholds(yScale.ticks(Y_NUM_TICKS))
     .value(d => -d.height);
   const bins = makeHistogram(data);
@@ -195,10 +220,10 @@ function withLegend(anchor) {
   const svg = select(anchor);
   svg
     .append("g")
-    .attr("class", "legendQuantile")
+    .attr("class", "legendOrdinal")
     .attr("transform", "translate(20,20)");
 
-  const legendQuantile = legendColor()
+  const legendOrdinal = legendColor()
     .title("Aspect Ratios")
     .shapeWidth(30)
     .shape(
@@ -208,11 +233,11 @@ function withLegend(anchor) {
         .size(150)()
     )
     .shapePadding(40)
-    .labels(["3:2", "4:3", "5:3", "5:4", "8:5", "16:9", "21:9", "Other"])
+    .labels(COMMON_RESOLUTION_LABELS)
     .orient("horizontal")
     .scale(colorScale);
 
-  svg.select(".legendQuantile").call(legendQuantile);
+  svg.select(".legendOrdinal").call(legendOrdinal);
 }
 
 const ChartLegend = props => {
@@ -236,12 +261,10 @@ const CaptionText = styled("p")`
   f6 lh-copy
 `;
 
-const Chart = props => {
-  const timeString = `${props.timeExtent
+const Chart = ({ data, timeExtent }) => {
+  const timeString = `${timeExtent
     .map(time => formatDate(time))
     .join(" and ")}`;
-
-  const { data } = props;
 
   const charts = (
     <React.Fragment>
@@ -282,7 +305,6 @@ const Chart = props => {
           </a>
           , by Cameron Yick.
         </CaptionText>
-
       </ChartTextBlock>
 
       <div className="appBody">
@@ -310,7 +332,16 @@ const Chart = props => {
           </a>
           . Point areas correspond to total visits between {timeString}.
         </CaptionText>
-        <SVG src="./usa.svg" />
+        <CaptionText>
+          Read about how this graphic was made{" "}
+          <a
+            href="https://www.serendipidata.com/posts/margin-charts-with-semiotic"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            in this blog post.
+          </a>
+        </CaptionText>
       </ChartTextBlock>
     </div>
   );
