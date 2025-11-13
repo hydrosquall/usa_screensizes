@@ -1,5 +1,97 @@
 
 import { AnnotationLabel, AnnotationBracket } from 'react-annotation';
+import { colorScale } from './formatting/colors';
+
+const aspectRatioAnnotations = [
+  {
+    type: AnnotationLabel,
+    height: 3304,
+    width: 4070,
+    // editMode: true,
+    note: {
+      label: 'Aspect Ratio',
+      wrap: 30,
+    },
+  },
+  {
+    type: AnnotationLabel,
+    height: 3300,
+    width: 3850,
+    dx: 0,
+    dy: 0,
+    // editMode: true,
+    note: {
+      label: '5:4',
+      labelColor: colorScale(5 / 4),
+    },
+  },
+  {
+    type: AnnotationLabel,
+    height: 3025,
+    width: 4010,
+    dx: 0,
+    dy: 0,
+    note: {
+      label: '4:3',
+      labelColor: colorScale(4 / 3),
+    },
+  },
+  {
+    type: AnnotationLabel,
+    height: 2700,
+    width: 4010,
+    dx: 0,
+    dy: 0,
+    note: {
+      label: '3:2',
+      labelColor: colorScale(3 / 2),
+    },
+  },
+  {
+    type: AnnotationLabel,
+    height: 2545,
+    width: 4010,
+    dx: 0,
+    dy: 0,
+    note: {
+      label: '8:5',
+      labelColor: colorScale(8 / 5),
+    },
+  },
+  {
+    type: AnnotationLabel,
+    height: 2440,
+    width: 4010,
+    dx: 0,
+    dy: 0,
+    note: {
+      label: '5:3',
+      labelColor: colorScale(5 / 3),
+    },
+  },
+  {
+    type: AnnotationLabel,
+    height: 2280,
+    width: 4010,
+    dx: 0,
+    dy: 0,
+    note: {
+      label: '16:9',
+      labelColor: colorScale(16 / 9),
+    },
+  },
+  {
+    type: AnnotationLabel,
+    height: 1750,
+    width: 4010,
+    dx: 0,
+    dy: 0,
+    note: {
+      label: '21:9',
+      labelColor: colorScale(21 / 9),
+    },
+  },
+]
 
 export const scatterAnnotations = [
   {
@@ -46,7 +138,6 @@ export const scatterAnnotations = [
   // AnnotationBracket
   {
     type: AnnotationBracket,
-
     height: 1000,
     width: 280,
     dx: 0,
@@ -61,4 +152,11 @@ export const scatterAnnotations = [
       title: 'Cellphones'
     },
   },
+  // Place by hand
+
 ]
+
+export const annotations = [
+  ...scatterAnnotations,
+  ...aspectRatioAnnotations,
+];

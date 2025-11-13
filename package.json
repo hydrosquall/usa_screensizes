@@ -15,7 +15,6 @@
     "react-hot-loader": "^4.7.1",
     "react-inlinesvg": "^0.8.4",
     "react-scripts": "2.1.5",
-    "react-spinners": "^0.5.3",
     "rxjs": "^6.4.0",
     "semiotic": "^1.17.0",
     "switchcase": "^1.0.11",
